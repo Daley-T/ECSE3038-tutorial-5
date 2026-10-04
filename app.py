@@ -50,3 +50,12 @@ def device_update(name:str, update_device: Device):
         devices.insert_one(dev_update)
         raise HTTPException(status_code=201, detail="Device named " + name + " created")
     return(dev_update) 
+
+@app.delete("/devices/{name}")
+def delete_device(name:str):
+    if (devices.find_one({"name":name}, {"_id": 0})) is not None:
+        devices.delete_one({"name":name})
+    else:
+        raise HTTPException(status_code=404, detail="No device named " + name + " was found")
+    return {"message": "Device named " + name + " deleted successfully"}
+

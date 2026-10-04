@@ -40,5 +40,13 @@ def add_device(device: Device):
         devices.insert_one(new_device)
         new_device.pop("_id")
     return new_device
-    
 
+@app.put("/devices/{name}")
+def device_update(name:str, update_device: Device):
+    dev_update = update_device.model_dump()
+    if (devices.find_one({"name":name}, {"_id": 0})) is not None:
+       devices.update_one(({"name":name}),{"$set": dev_update})
+    else:
+        devices.insert_one(dev_update)
+        raise HTTPException(status_code=201, detail="Device named " + name + " created")
+    return(dev_update) 
